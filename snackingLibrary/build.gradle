@@ -25,6 +25,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
 }
 
 dependencies {
@@ -34,4 +35,17 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.eriffanani' //your git id
+                artifactId = 'Snacking2' //your-repository
+                version = '1.0.0' // As same as the Tag
+            }
+        }
+    }
 }
