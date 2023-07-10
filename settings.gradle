@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "Snacking"
 include ':app'
 include ':snackingLibrary'
+project(':snackingLibrary').name = "Snacking2"
