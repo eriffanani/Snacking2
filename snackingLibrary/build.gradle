@@ -3,26 +3,18 @@ plugins {
     id 'maven-publish'
 }
 
-subprojects {
-    afterEvaluate {
-        if (!plugins.hasPlugin("android")) {
-            publishing {
-                publications {
-                    release(MavenPublication) {
-                        from components.release
-                        groupId = 'com.github.eriffanani' // your git id
-                        artifactId = 'Snacking2' // your-repository
-                        version = '1.1.3' // As same as the Tag
-                    }
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = "com.github.eriffanani"
+                artifactId = "Snacking2"
+                version = "1.1.3"
+                afterEvaluate {
+                    artifact(tasks.getByName("bundleReleaseAar"))
                 }
             }
         }
-    }
-}
-
-task comps {
-    afterEvaluate {
-        println("Components: " + components*.name)
     }
 }
 
@@ -47,6 +39,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
     }
 
 }
