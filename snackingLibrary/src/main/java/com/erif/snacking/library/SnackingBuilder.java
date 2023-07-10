@@ -50,6 +50,11 @@ public class SnackingBuilder {
         return this;
     }
 
+    public SnackingBuilder textStyle(int style) {
+        snackBar.textStyle(style);
+        return this;
+    }
+
     public SnackingBuilder icon(@DrawableRes int iconRes) {
         snackBar.icon(iconRes);
         return this;

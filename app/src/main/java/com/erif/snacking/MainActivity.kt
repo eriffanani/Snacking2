@@ -9,6 +9,7 @@ import com.erif.snacking.helper.AdapterRecyclerView
 import com.erif.snacking.helper.MainActivityHelper
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 
+
 class MainActivity : AppCompatActivity() {
 
     private var titles: Array<String>? = null
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
             "Background Color",
             "Background Image",
             "Text Color",
+            "Text Style",
             "Custom Font Family",
             "Anchor View",
             "Top Position",
@@ -56,22 +58,23 @@ class MainActivity : AppCompatActivity() {
         return object : AdapterRecyclerView.Callback {
             override fun onItemClick(message: String?) {
                 when (message) {
-                    titles?.get(0) -> { helper!!.snackBarBasic() }
-                    titles?.get(1) -> { helper!!.snackBarIcon() }
-                    titles?.get(2) -> { helper!!.snackBarAction() }
-                    titles?.get(3) -> { helper!!.snackBarMargin() }
-                    titles?.get(4) -> { helper!!.snackBarCorner() }
-                    titles?.get(5) -> { helper!!.snackBarCornerCustom() }
-                    titles?.get(6) -> { helper!!.snackBarBorder() }
-                    titles?.get(7) -> { helper!!.snackBarBackground() }
-                    titles?.get(8) -> { helper!!.snackBarBackgroundImage() }
-                    titles?.get(9) -> { helper!!.snackBarTextColor() }
-                    titles?.get(10) -> { helper!!.snackBarFont() }
-                    titles?.get(11) -> { helper!!.snackBarAnchor() }
-                    titles?.get(12) -> { helper!!.snackBarPosition() }
-                    titles?.get(13) -> { helper!!.snackBarState() }
-                    titles?.get(14) -> { helper!!.snackBarMaxLines() }
-                    titles?.get(15) -> { helper!!.snackBarLandscape() }
+                    titles?.get(0) -> { helper?.snackBarBasic() }
+                    titles?.get(1) -> { helper?.snackBarIcon() }
+                    titles?.get(2) -> { helper?.snackBarAction() }
+                    titles?.get(3) -> { helper?.snackBarMargin() }
+                    titles?.get(4) -> { helper?.snackBarCorner() }
+                    titles?.get(5) -> { helper?.snackBarCornerCustom() }
+                    titles?.get(6) -> { helper?.snackBarBorder() }
+                    titles?.get(7) -> { helper?.snackBarBackground() }
+                    titles?.get(8) -> { helper?.snackBarBackgroundImage() }
+                    titles?.get(9) -> { helper?.snackBarTextColor() }
+                    titles?.get(10) -> { helper?.snackBarBold() }
+                    titles?.get(11) -> { helper?.snackBarFont() }
+                    titles?.get(12) -> { helper?.snackBarAnchor() }
+                    titles?.get(13) -> { helper?.snackBarPosition() }
+                    titles?.get(14) -> { helper?.snackBarState() }
+                    titles?.get(15) -> { helper?.snackBarMaxLines() }
+                    titles?.get(16) -> { helper?.snackBarLandscape() }
                 }
             }
         }

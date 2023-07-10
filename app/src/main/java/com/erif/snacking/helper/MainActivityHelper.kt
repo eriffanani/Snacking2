@@ -9,16 +9,13 @@ import com.erif.snacking.library.SnackingState
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 
 
-class MainActivityHelper {
+class MainActivityHelper(parentView: View, private var fab: ExtendedFloatingActionButton?) {
 
-    private var parentView: View? = null
+    private var parentView: View? = parentView
     private var context: Context? = null
-    private var fab: ExtendedFloatingActionButton? = null
 
-    constructor(parentView: View, fab: ExtendedFloatingActionButton?) {
-        this.parentView = parentView
+    init {
         context = parentView.context
-        this.fab = fab
     }
 
     fun snackBarBasic() {
@@ -84,7 +81,7 @@ class MainActivityHelper {
 
     fun snackBarBackgroundImage() {
         parentView?.let {
-            Snacking.Builder(it, "This is custom background image")
+            Snacking.Builder(it, "Custom background image, border, corner, padding")
                 .background(R.mipmap.img_gradient)
                 .useMargin(true)
                 .cornerRadius(
@@ -93,7 +90,8 @@ class MainActivityHelper {
                     0,
                     R.dimen.snack_bar_corner_radius_small
                 )
-                .border(R.dimen.snack_bar_border_size_large, R.color.black)
+                .textStyle(Snacking.BOLD_ITALIC)
+                .border(R.dimen.snack_bar_border_size_xLarge, R.color.purple_500)
                 .build()
                 .show()
         }
@@ -128,6 +126,16 @@ class MainActivityHelper {
         }
     }
 
+    fun snackBarBold() {
+        parentView?.let {
+            Snacking.Builder(it, "This is bold italic text")
+                .fontFamily(R.font.montserrat)
+                .textStyle(Snacking.BOLD_ITALIC)
+                .build()
+                .show()
+        }
+    }
+
     fun snackBarAnchor() {
         parentView?.let {
             Snacking.Builder(it, "This message with anchor view")
@@ -146,7 +154,7 @@ class MainActivityHelper {
                 .useMargin(true)
                 .cornerRadius(R.dimen.snack_bar_corner_radius_large)
                 .border(R.dimen.snack_bar_border_size)
-                .action("Cancel", Snacking.Callback { snackBar: Snacking? -> toast("Action Click") })
+                .action("Cancel") { toast("Action Click") }
                 .show()
         }
     }
@@ -158,10 +166,10 @@ class MainActivityHelper {
                 .icon(R.drawable.ic_info)
                 .useMargin(true)
                 .cornerRadius(R.dimen.snack_bar_corner_radius_small)
-                .action("CLOSE", Snacking.Callback { snackBar: Snacking ->
+                .action("CLOSE") { snackBar: Snacking ->
                     toast("Action Clicked")
                     snackBar.dismiss()
-                })
+                }
                 .show()
         }
     }
@@ -172,7 +180,7 @@ class MainActivityHelper {
                 it,
                 "This is long message, this is long message, this is long message, this is long message, this is long message, this is long message"
             )
-                .action("LONG BUTTON TEXT") { snackBar: Snacking? -> toast("Action Click") }
+                .action("LONG BUTTON TEXT") { toast("Action Click") }
                 .messageMaxLines(2)
                 .build()
                 .show()
@@ -186,10 +194,10 @@ class MainActivityHelper {
                 .icon(R.drawable.ic_info)
                 .useMargin(true)
                 .cornerRadius(R.dimen.snack_bar_corner_radius_small)
-                .action("CLOSE", Snacking.Callback { snackBar: Snacking ->
+                .action("CLOSE") { snackBar: Snacking ->
                     toast("Action Click")
                     snackBar.dismiss()
-                })
+                }
                 .landscapeStyle(Snacking.CENTER)
                 .border(R.dimen.snack_bar_border_size)
                 .show()

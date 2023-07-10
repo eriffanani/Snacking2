@@ -93,6 +93,14 @@ public class Snacking {
     private Callback callback;
     private View fab = null;
 
+    @IntDef({NORMAL, BOLD, ITALIC, BOLD_ITALIC})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface TextStyle {}
+    public static final int NORMAL = 0;
+    public static final int BOLD = 1;
+    public static final int ITALIC = 2;
+    public static final int BOLD_ITALIC = 3;
+
     @IntDef({MATCH, LEFT, CENTER, RIGHT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface LandscapeStyle {}
@@ -170,8 +178,7 @@ public class Snacking {
             snackBarLayout.addView(customView);
             snackBar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
 
-            if (parentView instanceof CoordinatorLayout) {
-                CoordinatorLayout layout = (CoordinatorLayout) parentView;
+            if (parentView instanceof CoordinatorLayout layout) {
                 for (int i=0; i<layout.getChildCount(); i++) {
                     View child = layout.getChildAt(i);
                     if (child instanceof FloatingActionButton) {
@@ -233,6 +240,18 @@ public class Snacking {
         int color = parseColor(colorCode);
         if (color != 0)
             textMessage.setTextColor(color);
+    }
+
+    public void textStyle(@TextStyle int style) {
+        if (style == BOLD) {
+            textMessage.setTypeface(textMessage.getTypeface(), Typeface.BOLD);
+        } else if (style == ITALIC) {
+            textMessage.setTypeface(textMessage.getTypeface(), Typeface.ITALIC);
+        } else if (style == BOLD_ITALIC) {
+            textMessage.setTypeface(textMessage.getTypeface(), Typeface.BOLD_ITALIC);
+        } else {
+            textMessage.setTypeface(textMessage.getTypeface(), Typeface.NORMAL);
+        }
     }
 
     public void icon(@DrawableRes int iconRes) {
@@ -355,36 +374,43 @@ public class Snacking {
             float topLeft, float topRight, float bottomLeft, float bottomRight
     ) {
         if (bitmapDrawable.getBitmap() != null) {
-            Bitmap bitmap = bitmapDrawable.getBitmap();
             parent.post(() -> {
 
-                Bitmap cropBitmap = null;
+                Bitmap scaledBitmap = null;
+                int sWidth = parent.getContext().getResources().getDisplayMetrics().widthPixels;
+                int padding = getDimenInt(R.dimen.quick_snack_bar_margin_start_bottom_end);
+                int totalWidth = sWidth - (useMargin ? (padding * 2) : 0);
                 try {
-                    cropBitmap = Bitmap.createBitmap(
-                            bitmap, 0, bitmap.getHeight() / 2 - parent.getHeight() / 2,
-                            bitmap.getWidth(), parent.getHeight()
-                    );
+                    scaledBitmap = matchBitmap(bitmapDrawable, totalWidth);
                 } catch (Exception | OutOfMemoryError e) {
                     log("Bitmap size error: "+e.getMessage());
                 }
-                if (cropBitmap != null) {
-                    Bitmap output = Bitmap.createBitmap(cropBitmap.getWidth(), parent.getHeight(), Bitmap.Config.ARGB_8888);
+                if (scaledBitmap != null) {
+
+                    int snackBarTotalHeight = snackBar.getView().getHeight();
+                    float halfBitmap = (float) scaledBitmap.getHeight() / 2f;
+                    float halfSnackBarHeight = (float) snackBarTotalHeight / 2f;
+                    float startY = halfBitmap - halfSnackBarHeight;
+
+                    Bitmap croppedBitmap = Bitmap.createBitmap(scaledBitmap, 0, (int) startY, totalWidth, snackBarTotalHeight);
+
+                    Bitmap output = Bitmap.createBitmap(totalWidth, snackBarTotalHeight, Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(output);
 
                     Paint paint = new Paint();
                     paint.setAntiAlias(true);
                     paint.setColor(0xff424242);
                     float[] arrCorner = cornerRadii(topLeft, topRight, bottomLeft, bottomRight);
-                    Rect rect = new Rect(0, 0, cropBitmap.getWidth(), cropBitmap.getHeight());
+                    Rect rect = new Rect(0, 0, output.getWidth(), output.getHeight());
                     RectF rectF = new RectF();
-                    rectF.set(0, 0, output.getWidth(), output.getHeight());
+                    rectF.set(0, 0, totalWidth, snackBar.getView().getHeight());
                     Path path = new Path();
                     path.addRoundRect(rectF, arrCorner, Path.Direction.CW);
                     canvas.drawARGB(0, 0, 0, 0);
                     canvas.drawPath(path, paint);
 
                     paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-                    canvas.drawBitmap(cropBitmap, rect, rectF, paint);
+                    canvas.drawBitmap(croppedBitmap, rect, rectF, paint);
                     if (borderSize > 0 && borderColor != 0) {
                         Paint paintBorder = new Paint();
                         paintBorder.setStyle(Paint.Style.STROKE);
@@ -399,6 +425,26 @@ public class Snacking {
                 }
             });
         }
+    }
+
+    private Bitmap matchBitmap(Drawable drawable, int outputWidth) {
+        // Get Drawable Size
+        int getDrawableWidth = drawable.getIntrinsicWidth();
+        int drawableWidth = getDrawableWidth > 0 ? getDrawableWidth : 1;
+        int getDrawableHeight = drawable.getIntrinsicHeight();
+        int drawableHeight = getDrawableHeight > 0 ? getDrawableHeight : 1;
+        // Create Canvas from drawable
+        Bitmap bitmap = Bitmap.createBitmap(drawableWidth, drawableHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        // Bitmap Size
+        int bitmapWidth = bitmap.getWidth();
+        int bitmapHeight = bitmap.getHeight();
+        // Output Size
+        int outputHeight = bitmapHeight * outputWidth / bitmapWidth;
+        // Create New Bitmap
+        return Bitmap.createScaledBitmap(bitmap, outputWidth, outputHeight, false);
     }
 
     public void border(@DimenRes int borderRes, @ColorRes int borderColorRes) {
@@ -703,6 +749,7 @@ public class Snacking {
     }
 
     private void applyBackground() {
+        snackBar.getView().setBackgroundTintList(null);
         Drawable getDrawable = getDrawable(backgroundRes);
         if (getDrawable instanceof BitmapDrawable) {
             applyBackgroundBitmap((BitmapDrawable) getDrawable,
@@ -734,12 +781,10 @@ public class Snacking {
         }
         Drawable getDrawableButton = textAction.getBackground();
         if (getDrawableButton != null) {
-            if (getDrawableButton instanceof RippleDrawable) {
-                RippleDrawable drawableButton = (RippleDrawable) getDrawableButton;
+            if (getDrawableButton instanceof RippleDrawable drawableButton) {
                 Drawable getDrawableRipple = drawableButton.getDrawable(0);
                 if (getDrawableRipple != null) {
-                    if (getDrawableRipple instanceof GradientDrawable) {
-                        GradientDrawable drawableRipple = (GradientDrawable) getDrawableRipple;
+                    if (getDrawableRipple instanceof GradientDrawable drawableRipple) {
                         drawableRipple.setCornerRadii(
                                 cornerRadii(cornerTopLeft, cornerTopRight, cornerBottomLeft, cornerBottomRight)
                         );
@@ -764,8 +809,7 @@ public class Snacking {
     }
 
     private void showWithTopPosition() {
-        if (parentView instanceof CoordinatorLayout) {
-            CoordinatorLayout layout = (CoordinatorLayout) parentView;
+        if (parentView instanceof CoordinatorLayout layout) {
             for (int i=0; i<layout.getChildCount(); i++) {
                 View child = layout.getChildAt(i);
                 fab = child instanceof FloatingActionButton ? (FloatingActionButton) child : child instanceof ExtendedFloatingActionButton ? (ExtendedFloatingActionButton) child : null;
