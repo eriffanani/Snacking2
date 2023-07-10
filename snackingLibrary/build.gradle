@@ -3,6 +3,22 @@ plugins {
     id 'maven-publish'
 }
 
+subprojects {
+    id 'maven-publish'
+    afterEvaluate {
+        publishing {
+            publications {
+                release(MavenPublication) {
+                    from components.release
+                    groupId = 'com.github.eriffanani' // your git id
+                    artifactId = 'Snacking2' // your-repository
+                    version = '1.2.0' // As same as the Tag
+                }
+            }
+        }
+    }
+}
+
 android {
     namespace 'com.erif.snacking.library'
     compileSdk 33
@@ -35,22 +51,4 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-}
-
-subprojects {
-    id 'maven-publish'
-    afterEvaluate {
-        if (!plugins.hasPlugin("android")) {
-            publishing {
-                publications {
-                    release(MavenPublication) {
-                        from components.release
-                        groupId = 'com.github.eriffanani' // your git id
-                        artifactId = 'Snacking2' // your-repository
-                        version = '1.2.0' // As same as the Tag
-                    }
-                }
-            }
-        }
-    }
 }
