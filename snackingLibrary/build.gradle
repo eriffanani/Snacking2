@@ -3,17 +3,30 @@ plugins {
     id 'maven-publish'
 }
 
-subprojects {
+/*subprojects {
     id 'maven-publish'
     afterEvaluate {
         publishing {
             publications {
-                release(MavenPublication) {
-                    from components.release
+                create('maven_puclic', MavenPublication::class) {
                     groupId = 'com.github.eriffanani' // your git id
                     artifactId = 'Snacking2' // your-repository
                     version = '1.2.0' // As same as the Tag
+                    from(components.getName("java"))
                 }
+            }
+        }
+    }
+}*/
+
+subprojects {
+    publishing {
+        publications {
+            create("maven_public", MavenPublication::class) {
+                groupId = 'com.github.eriffanani' // your git id
+                artifactId = 'Snacking2' // your-repository
+                version = '1.2.0' // As same as the Tag
+                from(components.getName("java"))
             }
         }
     }
