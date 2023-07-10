@@ -47,7 +47,7 @@ subprojects {
                         from components.release
                         groupId = 'com.github.eriffanani' // your git id
                         artifactId = 'Snacking2' // your-repository
-                        version = '1.0.0' // As same as the Tag
+                        version = '1.2.0' // As same as the Tag
                     }
                 }
             }
