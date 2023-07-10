@@ -11,11 +11,10 @@ subprojects {
             publishing {
                 publications {
                     release(MavenPublication) {
-                        artifactId "$project.name"
                         from components.release
-                        groupId = 'com.github.eriffanani' // your git id
-                        artifactId = 'Snacking2' // your-repository
-                        version = '1.1.0' // As same as the Tag
+                        groupId = 'com.erif.snacking' // your git id
+                        artifactId = 'library' // your-repository
+                        version = '1.1.1' // As same as the Tag
                     }
                 }
             }
