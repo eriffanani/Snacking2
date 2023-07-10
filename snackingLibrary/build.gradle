@@ -20,13 +20,15 @@ plugins {
 }*/
 
 subprojects {
-    publishing {
-        publications {
-            create("maven_public", MavenPublication::class) {
-                groupId = 'com.github.eriffanani' // your git id
-                artifactId = 'Snacking2' // your-repository
-                version = '1.2.0' // As same as the Tag
-                from(components.getName("java"))
+    afterEvaluate {
+        publishing {
+            publications {
+                create("maven_public", MavenPublication::class) {
+                    groupId = 'com.github.eriffanani' // your git id
+                    artifactId = 'Snacking2' // your-repository
+                    version = '1.3.1' // As same as the Tag
+                    from(components.getName("java"))
+                }
             }
         }
     }
