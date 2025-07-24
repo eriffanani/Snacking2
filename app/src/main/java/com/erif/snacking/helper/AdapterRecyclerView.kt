@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.erif.snacking.R
 
-class AdapterRecyclerView constructor(
+class AdapterRecyclerView(
     private val callback: Callback
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -42,13 +42,8 @@ class AdapterRecyclerView constructor(
     }
 
     private class ListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val parent: RelativeLayout
-        val txtTitle: TextView
-
-        init {
-            parent = itemView.findViewById(R.id.item_list_parent)
-            txtTitle = itemView.findViewById(R.id.item_list_txtTitle)
-        }
+        val parent: RelativeLayout = itemView.findViewById(R.id.item_list_parent)
+        val txtTitle: TextView = itemView.findViewById(R.id.item_list_txtTitle)
     }
 
     interface Callback {

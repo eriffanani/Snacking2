@@ -8,7 +8,6 @@ import com.erif.snacking.library.Snacking
 import com.erif.snacking.library.SnackingState
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 
-
 class MainActivityHelper(parentView: View, private var fab: ExtendedFloatingActionButton?) {
 
     private var parentView: View? = parentView
